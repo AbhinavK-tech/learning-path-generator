@@ -1,19 +1,41 @@
+const { searchYouTube } =
+require('../services/youtubeService');
+
 class ResourceCurator {
-  getResources(roadmap) {
-    return roadmap.roadmap.map(item => ({
-      phase: item.phase,
-      title: item.title,
-      resources: [
-        {
-          type: "YouTube",
-          query: item.title + " tutorial"
-        },
-        {
-          type: "Documentation",
-          query: item.title + " guide"
-        }
-      ]
-    }));
+
+  async getResources(roadmap) {
+
+    const result = [];
+
+    const topics =
+      roadmap.roadmap || roadmap;
+
+    for (const item of topics) {
+
+      const title =
+        item.title || item;
+
+      const videos =
+        await searchYouTube(
+          `${title} tutorial`
+        );
+
+      result.push({
+        title,
+        resources: [
+          {
+            type: "YouTube",
+            videos
+          },
+          {
+            type: "Documentation",
+            query: `${title} guide`
+          }
+        ]
+      });
+    }
+
+    return result;
   }
 }
 
