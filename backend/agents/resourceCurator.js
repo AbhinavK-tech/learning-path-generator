@@ -1,5 +1,4 @@
-const { searchYouTube } =
-require('../services/youtubeService');
+const { searchYouTube } = require("../services/youtubeService");
 
 class ResourceCurator {
 
@@ -7,36 +6,51 @@ class ResourceCurator {
 
     const result = [];
 
-    const topics =
-      roadmap.roadmap || roadmap;
+    const phases = roadmap.phases || [];
 
-    for (const item of topics) {
+    for (const phase of phases) {
 
-      const title =
-        item.title || item;
-
-      const videos =
-        await searchYouTube(
-          `${title} tutorial`
-        );
+      const videos = await searchYouTube(
+        `${phase.title} tutorial`
+      );
 
       result.push({
-        title,
+
+        phase: phase.phase,
+
+        title: phase.title,
+
+        duration: phase.duration,
+
+        project: phase.project,
+
         resources: [
+
           {
             type: "YouTube",
             videos
           },
+
           {
             type: "Documentation",
-            query: `${title} guide`
+            query: `${phase.title} official documentation`
+          },
+
+          {
+            type: "Practice",
+            query: `${phase.title} exercises`
           }
+
         ]
+
       });
+
     }
 
     return result;
+
   }
+
 }
 
 module.exports = ResourceCurator;

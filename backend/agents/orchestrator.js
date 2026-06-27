@@ -4,6 +4,7 @@ const ResourceCurator = require('./resourceCurator');
 const ProgressAdvisor = require('./progressAdvisor');
 
 class LearningPathOrchestrator {
+
   async generate(goal, level) {
 
     const assessor = new SkillAssessor();
@@ -11,16 +12,17 @@ class LearningPathOrchestrator {
     const curator = new ResourceCurator();
     const advisor = new ProgressAdvisor();
 
-const assessment = assessor.assess(goal, level);
+    // Step 1
+    const assessment = assessor.assess(goal, level);
 
-const roadmap =
-  await designer.generateRoadmap(assessment);
+    // Step 2
+    const roadmap = await designer.generateRoadmap(assessment);
 
-const resources =
-  await curator.getResources(roadmap);
+    // Step 3
+    const resources = await curator.getResources(roadmap);
 
-const advice =
-  advisor.generateAdvice(goal, level);
+    // Step 4
+    const advice = advisor.generateAdvice(goal, level);
 
     return {
       assessment,
@@ -29,6 +31,7 @@ const advice =
       advice
     };
   }
+
 }
 
 module.exports = LearningPathOrchestrator;
