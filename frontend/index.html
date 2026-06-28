@@ -775,26 +775,113 @@
         }
 
         // Dynamic Mock Generator Trigger Handling Form submission pipeline simulation
-        function handleFormSubmit(e) {
-            e.preventDefault();
+        function displayRoadmap(data){
 
-            const goalValue = document.getElementById('goal').value;
-            const levelValue = document.getElementById('level').value;
+    document.getElementById("res-title").innerText =
+        data.assessment.goal;
 
-            // Step 1: Render interim progress animation component view
-            switchTab('loading');
+    document.getElementById("res-badge").innerText =
+        data.assessment.level;
 
-            // Step 2: Mimic runtime compilation logic window timing delay execution
-            setTimeout(() => {
-                // Map generated value criteria text arrays safely into view nodes
-                document.getElementById('res-title').innerText = goalValue;
-                document.getElementById('res-badge').innerText = levelValue;
-                document.getElementById('res-subtitle').innerText = `Custom curated learning roadmap mapped specifically for ${levelValue} execution.`;
-                
-                // Show completed structure array
-                switchTab('results');
-            }, 1800);
+    document.getElementById("res-subtitle").innerText =
+        data.advice.recommendation;
+
+    const timeline =
+        document.querySelector(".timeline");
+
+    timeline.innerHTML = "";
+
+    data.roadmap.phases.forEach((phase,index)=>{
+
+        let html = `
+
+        <div class="timeline-item">
+
+            <div class="timeline-dot"></div>
+
+            <div class="timeline-content">
+
+                <h4>
+                Phase ${phase.phase} :
+                ${phase.title}
+                </h4>
+
+                <p>
+                Duration :
+                ${phase.duration}
+                </p>
+
+                <p>
+                <b>Topics</b><br>
+                ${phase.topics.join(", ")}
+                </p>
+
+                <p>
+                <b>Skills</b><br>
+                ${phase.skills.join(", ")}
+                </p>
+
+                <p>
+
+                <b>Project</b>
+
+                <br>
+
+                ${phase.project}
+
+                </p>
+
+        `;
+
+        if(data.resources[index]){
+
+            html += `<div class="resource-tags">`;
+
+            data.resources[index].resources.forEach(r=>{
+
+                if(r.type==="YouTube"){
+
+                    r.videos.forEach(video=>{
+
+                        html += `
+
+                        <a class="tag youtube"
+
+                        target="_blank"
+
+                        href="https://youtube.com/watch?v=${video.videoId}">
+
+                        📺 ${video.title}
+
+                        </a>
+
+                        `;
+
+                    });
+
+                }
+
+            });
+
+            html += `</div>`;
+
         }
+
+        html += `
+
+            </div>
+
+        </div>
+
+        `;
+
+        timeline.innerHTML += html;
+
+    });
+
+    switchTab("results");
+
+}
     </script>
 </body>
 </html>
