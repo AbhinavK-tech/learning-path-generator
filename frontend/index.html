@@ -774,114 +774,155 @@
             document.getElementById('features').scrollIntoView({ behavior: 'smooth' });
         }
 
-        // Dynamic Mock Generator Trigger Handling Form submission pipeline simulation
-        function displayRoadmap(data){
+        async function handleFormSubmit(e) {
 
-    document.getElementById("res-title").innerText =
-        data.assessment.goal;
+        e.preventDefault();
 
-    document.getElementById("res-badge").innerText =
-        data.assessment.level;
+        const goal = document.getElementById("goal").value;
+        const level = document.getElementById("level").value;
 
-    document.getElementById("res-subtitle").innerText =
-        data.advice.recommendation;
+        switchTab("loading");
 
-    const timeline =
-        document.querySelector(".timeline");
+        try {
 
-    timeline.innerHTML = "";
+            const response = await fetch("http://localhost:3000/generate", {
 
-    data.roadmap.phases.forEach((phase,index)=>{
+                method: "POST",
 
-        let html = `
+                headers: {
+                    "Content-Type": "application/json"
+                },
 
-        <div class="timeline-item">
-
-            <div class="timeline-dot"></div>
-
-            <div class="timeline-content">
-
-                <h4>
-                Phase ${phase.phase} :
-                ${phase.title}
-                </h4>
-
-                <p>
-                Duration :
-                ${phase.duration}
-                </p>
-
-                <p>
-                <b>Topics</b><br>
-                ${phase.topics.join(", ")}
-                </p>
-
-                <p>
-                <b>Skills</b><br>
-                ${phase.skills.join(", ")}
-                </p>
-
-                <p>
-
-                <b>Project</b>
-
-                <br>
-
-                ${phase.project}
-
-                </p>
-
-        `;
-
-        if(data.resources[index]){
-
-            html += `<div class="resource-tags">`;
-
-            data.resources[index].resources.forEach(r=>{
-
-                if(r.type==="YouTube"){
-
-                    r.videos.forEach(video=>{
-
-                        html += `
-
-                        <a class="tag youtube"
-
-                        target="_blank"
-
-                        href="https://youtube.com/watch?v=${video.videoId}">
-
-                        📺 ${video.title}
-
-                        </a>
-
-                        `;
-
-                    });
-
-                }
+                body: JSON.stringify({
+                    goal,
+                    level
+                })
 
             });
 
-            html += `</div>`;
+            const data = await response.json();
+
+            displayRoadmap(data);
+
+        } catch (err) {
+
+            alert("Backend Connection Failed");
+
+            console.log(err);
+
+            switchTab("generate");
 
         }
 
-        html += `
+}
+        // Dynamic Mock Generator Trigger Handling Form submission pipeline simulation
+        function displayRoadmap(data){
+
+        document.getElementById("res-title").innerText =
+            data.assessment.goal;
+
+        document.getElementById("res-badge").innerText =
+            data.assessment.level;
+
+        document.getElementById("res-subtitle").innerText =
+            data.advice.recommendation;
+
+        const timeline =
+            document.querySelector(".timeline");
+
+        timeline.innerHTML = "";
+
+        data.roadmap.phases.forEach((phase,index)=>{
+
+            let html = `
+
+            <div class="timeline-item">
+
+                <div class="timeline-dot"></div>
+
+                <div class="timeline-content">
+
+                    <h4>
+                    Phase ${phase.phase} :
+                    ${phase.title}
+                    </h4>
+
+                    <p>
+                    Duration :
+                    ${phase.duration}
+                    </p>
+
+                    <p>
+                    <b>Topics</b><br>
+                    ${phase.topics.join(", ")}
+                    </p>
+
+                    <p>
+                    <b>Skills</b><br>
+                    ${phase.skills.join(", ")}
+                    </p>
+
+                    <p>
+
+                    <b>Project</b>
+
+                    <br>
+
+                    ${phase.project}
+
+                    </p>
+
+            `;
+
+            if(data.resources[index]){
+
+                html += `<div class="resource-tags">`;
+
+                data.resources[index].resources.forEach(r=>{
+
+                    if(r.type==="YouTube"){
+
+                        r.videos.forEach(video=>{
+
+                            html += `
+
+                            <a class="tag youtube"
+
+                            target="_blank"
+
+                            href="https://youtube.com/watch?v=${video.videoId}">
+
+                            📺 ${video.title}
+
+                            </a>
+
+                            `;
+
+                        });
+
+                    }
+
+                });
+
+                html += `</div>`;
+
+            }
+
+            html += `
+
+                </div>
 
             </div>
 
-        </div>
+            `;
 
-        `;
+            timeline.innerHTML += html;
 
-        timeline.innerHTML += html;
+        });
 
-    });
+        switchTab("results");
 
-    switchTab("results");
-
-}
+    }
     </script>
 </body>
 </html>
