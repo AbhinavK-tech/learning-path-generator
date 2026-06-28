@@ -4,7 +4,7 @@ const express = require('express');
 const cors = require('cors');
 
 const LearningPathOrchestrator =
-  require('./backend/agents/orchestrator');
+require('./backend/agents/orchestrator');
 
 const app = express();
 
@@ -12,28 +12,39 @@ app.use(cors());
 app.use(express.json());
 
 app.get('/', (req, res) => {
-  res.json({
-    message: 'Learning Path Generator API Running'
-  });
+    res.send('Learning Path Generator API Running');
 });
 
-app.post('/generate-learning-path', (req, res) => {
+app.post('/generate', async (req, res) => {
 
-  const { goal, level } = req.body;
+    try {
 
-  const orchestrator =
-    new LearningPathOrchestrator();
+        const { goal, level } = req.body;
 
-  const result =
-    orchestrator.generate(goal, level);
+        const orchestrator =
+            new LearningPathOrchestrator();
 
-  res.json(result);
+        const result =
+            await orchestrator.generate(goal, level);
+
+        res.json(result);
+
+    } catch (err) {
+
+        console.error(err);
+
+        res.status(500).json({
+            error: err.message
+        });
+
+    }
+
 });
 
-const PORT = process.env.PORT || 5000;
+const PORT = 3000;
 
 app.listen(PORT, () => {
-  console.log(
-    `Server running on port ${PORT}`
-  );
+
+    console.log(`Server running on port ${PORT}`);
+
 });
